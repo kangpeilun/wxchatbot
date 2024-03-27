@@ -14,7 +14,7 @@
 import json
 import os.path as op
 from utils.util import *
-from utils.data import database
+from utils.database import database
 
 
 # 以下为数据库操作

@@ -24,6 +24,7 @@ import json
 
 from utils.listen_list import read_listen_list_from_db, check_listen_list_from_db
 from utils.keywords import read_keywords_from_db, check_keywords_from_db
+from utils.bot_service import read_bot_service_from_db, check_bot_service_from_db
 from utils.chat_info import insert_chat_info_to_db, get_all_chat_info, search_chat_info_by_user_group
 from utils.util import *
 from bot_param import Bot_param
@@ -32,11 +33,15 @@ from bot_param import Bot_param
 class WxChatBot:
     def __init__(self):
         self.wx = WeChat()  # 实例化为微信对象
+        self.Bot_name = self.wx.nickname  # 获取Bot名称
         # 启动前参数初始化，以及数据检查
         check_listen_list_from_db()  # 运行前检查是否缺少文件
         check_keywords_from_db()
-        self.listen_list = read_listen_list_from_db()  # 从json文件中获取监听对象名称
-        self.keywords = read_keywords_from_db()  # 从json文件中获取关键词
+        check_bot_service_from_db()
+        self.listen_list = read_listen_list_from_db()       # 从db中获取监听对象名称 list
+        self.keywords = read_keywords_from_db()             # 从db中获取关键词 list
+        self.bot_service = read_bot_service_from_db()       # 从db中获取bot和客服对应表，dict
+        self.service = self.bot_service[self.Bot_name]   # 获取该Bot对应的客服名称
         self.__Add_Listen_Group()  # 添加需要监听的群聊
         # Bot正式启动，并开始记录时间
         self.__Bot_Boot_output_msg()
@@ -47,6 +52,10 @@ class WxChatBot:
         """
         print(red_text("Bot初始化完成，并完成启动，持续收集群聊信息，并监听用户关键词..."))
         self.start_time = int(time.time())  # 获取时间戳，方便计时，精确到秒
+
+    def __Bot_wait_time(self, wait_time):
+        """用于Bot回答问题的缓冲时间，防止回答过快导致微信退出"""
+        time.sleep(wait_time)
 
     def __get_time(self):
         """用于获取系统当前时间，时间戳，精确到秒"""
@@ -99,15 +108,30 @@ class WxChatBot:
                 user_name = msg[0]    # 获取当前群组下发送消息的用户的用户名
                 user_text = msg[1]    # 获取用户发送的文本
 
-                for keyword, reply, reply_type in self.keywords:
-                    if keyword in user_text:  # 循环检测用户输入是否含有关键词，然后发送对应消息
-                        if reply_type == 'image' or reply_type == 'file':
-                            self.__SendFile(reply, user_group)
-                        else:
-                            self.__SendText(reply, user_group)
-                        insert_chat_info_to_db(user_name, user_group, user_text, reply, reply_type)
-                        break
-                time.sleep(Bot_param['bot_reply_wait_time'])  # Bot依次回答每个关键词的间隔时间
+                if f"@{self.Bot_name}" in user_text:
+                    # 用户的输入文本中含有 '@Bot' 字样，选择进入特定任务进行处理，否则维持一般监测状态，检测到关键词就自动发送回复
+                    # 指令用于控制Bot要去做一件什么事，设定的指令有：问题，时间，报告
+                    # 动作表示用户期望Bot完成的任务，如：设定定时消息，向Bot对应客服发送消息
+                    _, instruct, action = user_text.split(" ")  # 使用空格将用户的输入进行分割，["@Bot", "指令", "动作"]
+                    if instruct == "问题":
+                        hold_on_msg = f"尊敬的{user_name}先生/女士，请您稍等，会有专属人员为您服务！"
+                        self.wx.SendMsg(msg=hold_on_msg, who=user_group)
+                        self.__Bot_wait_time(Bot_param['bot_reply_wait_time'])  # 控制Bot回复时间
+                        self.__Listen_Question(user_name, user_group, action)   # 向Bot对应客服发送消息
+                    elif instruct == "时间":
+                        pass
+                    elif instruct == "报告":
+                        pass
+                else:  # 否则维持一般监测状态，检测到关键词就自动发送回复
+                    for keyword, reply, reply_type in self.keywords:
+                        if keyword in user_text:  # 循环检测用户输入是否含有关键词，然后发送对应消息
+                            if reply_type == 'image' or reply_type == 'file':
+                                self.__SendFile(reply, user_group)
+                            else:
+                                self.__SendText(reply, user_group)
+                            insert_chat_info_to_db(user_name, user_group, user_text, reply, reply_type)
+                            break
+                self.__Bot_wait_time(Bot_param['bot_reply_wait_time'])  # Bot依次回答每个关键词的间隔时间
 
     def Create_Analysis_Report(self, report_path='./report.txt'):
         """4.提供助手运营情况分析，微信群覆盖率，建设情况，一次答复率，网络经理处理率等
@@ -185,13 +209,21 @@ class WxChatBot:
         """
         pass
 
-    def __Listen_Question(self):
-        """监听
+    def __Listen_Question(self, user_name, user_group, action):
+        """Bot要和客服是微信好友才能实现，service为Bot给客服备注的名称
+        监听
         '@Bot 问题 问题本身A'
         Bot将问题发送给其对应的客服微信，同时附带群聊名称，以及用户名称，方便客服与用户对接
         同时Bot发送类似正在执行的提示信息
         """
-        pass
+        print(f"正在向客服 {self.service} 发送来自群组 {user_group}, 用户为 {user_name} 的问题")
+        msg_body = f"""来自下面的群组的用户发送过来一个问题，请及时处理\n
+        群组：{user_group}\n
+        用户：{user_name}\n
+        问题：{action}
+        """
+        self.wx.SendMsg(msg_body, who=self.service)
+
 
     def __Collect_All_User_Msg(self):
         """Bot每隔一段时间收集监听群组中所有用户发送的消息，将文字存入数据库，文件存入指定文件夹内
@@ -213,7 +245,7 @@ class WxChatBot:
         while True:
             self.__Listen_Sensitive()
 
-            time.sleep(Bot_param['listen_wait_time'])  # Bot每隔多久扫描一次所有群聊的消息
+            self.__Bot_wait_time(Bot_param['listen_wait_time'])  # Bot每隔多久扫描一次所有群聊的消息
 
 
 if __name__ == '__main__':

@@ -28,7 +28,7 @@
 """
 
 from utils.util import *
-from utils.data import database
+from utils.database import database
 
 
 def insert_chat_info_to_db(user_name, user_group, user_text, reply, reply_type):

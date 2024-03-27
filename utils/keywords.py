@@ -22,7 +22,7 @@
 import json
 import os.path as op
 
-from utils.data import database
+from utils.database import database
 from utils.util import *
 
 
