@@ -1,0 +1,94 @@
+{
+    "文件传输助手": [
+        {
+            "user_name": "Self",
+            "user_group": "文件传输助手",
+            "user_text": "发送图片",
+            "reply": "D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG",
+            "time": "22-3月 -24",
+            "reply_type": "image"
+        },
+        {
+            "user_name": "Self",
+            "user_group": "文件传输助手",
+            "user_text": "你好",
+            "reply": "你也好呀!",
+            "time": "22-3月 -24",
+            "reply_type": "text"
+        },
+        {
+            "user_name": "Self",
+            "user_group": "文件传输助手",
+            "user_text": "你好",
+            "reply": "你也好呀!",
+            "time": "22-3月 -24",
+            "reply_type": "text"
+        }
+    ],
+    "bot测试": [
+        {
+            "user_name": "Self",
+            "user_group": "bot测试",
+            "user_text": "谢谢",
+            "reply": "不客气",
+            "time": "22-3月 -24",
+            "reply_type": "text"
+        },
+        {
+            "user_name": "微信小号",
+            "user_group": "bot测试",
+            "user_text": "你好",
+            "reply": "你也好呀!",
+            "time": "21-3月 -24",
+            "reply_type": null
+        },
+        {
+            "user_name": "Self",
+            "user_group": "bot测试",
+            "user_text": "发送文件",
+            "reply": "D:\\UserData\\Desktop\\网易云音乐.lnk",
+            "time": "22-3月 -24",
+            "reply_type": "file"
+        },
+        {
+            "user_name": "Self",
+            "user_group": "bot测试",
+            "user_text": "发送图片",
+            "reply": "\"D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG\"",
+            "time": "22-3月 -24",
+            "reply_type": "image"
+        },
+        {
+            "user_name": "Self",
+            "user_group": "bot测试",
+            "user_text": "发送图片",
+            "reply": "\"D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG\"",
+            "time": "22-3月 -24",
+            "reply_type": "image"
+        },
+        {
+            "user_name": "Self",
+            "user_group": "bot测试",
+            "user_text": "发送图片",
+            "reply": "D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG",
+            "time": "22-3月 -24",
+            "reply_type": "image"
+        },
+        {
+            "user_name": "Self",
+            "user_group": "bot测试",
+            "user_text": "发送图片",
+            "reply": "D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG",
+            "time": "22-3月 -24",
+            "reply_type": "image"
+        },
+        {
+            "user_name": "Self",
+            "user_group": "bot测试",
+            "user_text": "发送文件",
+            "reply": "D:\\UserData\\Desktop\\网易云音乐.lnk",
+            "time": "22-3月 -24",
+            "reply_type": "file"
+        }
+    ]
+}

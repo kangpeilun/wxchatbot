@@ -1,0 +1,19 @@
+对话记录分析报告: 
+在本次运行过程中共监测到2个群组使用了Bot，一共进行了11次对话，这些群组分别为: 
+文件传输助手
+bot测试
+
+在群组 文件传输助手 中，Bot进行了3次对话，对话内容如下: 
+Self	 user_text: 发送图片	 reply: D:\UserData\Pictures\Saved Pictures\美图\EVA.PNG	 [22-3月 -24]
+Self	 user_text: 你好	 reply: 你也好呀!	 [22-3月 -24]
+Self	 user_text: 你好	 reply: 你也好呀!	 [22-3月 -24]
+
+在群组 bot测试 中，Bot进行了8次对话，对话内容如下: 
+Self	 user_text: 谢谢	 reply: 不客气	 [22-3月 -24]
+微信小号	 user_text: 你好	 reply: 你也好呀!	 [21-3月 -24]
+Self	 user_text: 发送文件	 reply: D:\UserData\Desktop\网易云音乐.lnk	 [22-3月 -24]
+Self	 user_text: 发送图片	 reply: "D:\UserData\Pictures\Saved Pictures\美图\EVA.PNG"	 [22-3月 -24]
+Self	 user_text: 发送图片	 reply: "D:\UserData\Pictures\Saved Pictures\美图\EVA.PNG"	 [22-3月 -24]
+Self	 user_text: 发送图片	 reply: D:\UserData\Pictures\Saved Pictures\美图\EVA.PNG	 [22-3月 -24]
+Self	 user_text: 发送图片	 reply: D:\UserData\Pictures\Saved Pictures\美图\EVA.PNG	 [22-3月 -24]
+Self	 user_text: 发送文件	 reply: D:\UserData\Desktop\网易云音乐.lnk	 [22-3月 -24]

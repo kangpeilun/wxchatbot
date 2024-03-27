@@ -1,0 +1,26 @@
+初始化成功，获取到已登录窗口：略略略
+初始化成功，获取到已登录窗口：略略略
+检测到已创建监听列表，输出listen_list: 
+ ['文件传输助手', 'bot测试', '微信小号']
+检测到已创建关键词列表，输出keywords:  [('你真棒', '谢谢', 'text'), ('谢谢', '不客气', 'text'), ('发送文件', 'D:\\UserData\\Desktop\\网易云音乐.lnk', 'file'), ('@我', '你真棒', 'text'), ('你好', '你也好呀!', 'text'), ('发送图片', 'D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG', 'image')]
+检测到已创建监听列表，输出listen_list: 
+ ['文件传输助手', 'bot测试', '微信小号']
+检测到已创建关键词列表，输出keywords:  [('你真棒', '谢谢', 'text'), ('谢谢', '不客气', 'text'), ('发送文件', 'D:\\UserData\\Desktop\\网易云音乐.lnk', 'file'), ('@我', '你真棒', 'text'), ('你好', '你也好呀!', 'text'), ('发送图片', 'D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG', 'image')]
+1. 已将群聊 文件传输助手 加入监听列表
+2. 已将群聊 bot测试 加入监听列表
+3. 已将群聊 微信小号 加入监听列表
+开始监听群组中用户的关键词
+time_count:  0 s	 msgs:  {}
+初始化成功，获取到已登录窗口：略略略
+检测到已创建监听列表，输出listen_list: 
+ ['文件传输助手', 'bot测试', '微信小号']
+检测到已创建关键词列表，输出keywords:  [('你真棒', '谢谢', 'text'), ('谢谢', '不客气', 'text'), ('发送文件', 'D:\\UserData\\Desktop\\网易云音乐.lnk', 'file'), ('@我', '你真棒', 'text'), ('你好', '你也好呀!', 'text'), ('发送图片', 'D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG', 'image')]
+检测到已创建监听列表，输出listen_list: 
+ ['文件传输助手', 'bot测试', '微信小号']
+检测到已创建关键词列表，输出keywords:  [('你真棒', '谢谢', 'text'), ('谢谢', '不客气', 'text'), ('发送文件', 'D:\\UserData\\Desktop\\网易云音乐.lnk', 'file'), ('@我', '你真棒', 'text'), ('你好', '你也好呀!', 'text'), ('发送图片', 'D:\\UserData\\Pictures\\Saved Pictures\\美图\\EVA.PNG', 'image')]
+1. 已将群聊 文件传输助手 加入监听列表
+2. 已将群聊 bot测试 加入监听列表
+3. 已将群聊 微信小号 加入监听列表
+开始监听群组中用户的关键词
+time_count:  0 s	 msgs:  {}
+time_count:  10 s	 msgs:  {}
