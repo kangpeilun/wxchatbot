@@ -15,6 +15,9 @@
 """
 
 import os.path as op
+import time
+from datetime import datetime
+
 from wxauto import WeChat
 import re
 import json
@@ -29,13 +32,29 @@ from bot_param import Bot_param
 class WxChatBot:
     def __init__(self):
         self.wx = WeChat()  # 实例化为微信对象
+        # 启动前参数初始化，以及数据检查
         check_listen_list_from_db()  # 运行前检查是否缺少文件
         check_keywords_from_db()
         self.listen_list = read_listen_list_from_db()  # 从json文件中获取监听对象名称
         self.keywords = read_keywords_from_db()  # 从json文件中获取关键词
-        self.Add_Listen_Group()  # 添加需要监听的群聊
+        self.__Add_Listen_Group()  # 添加需要监听的群聊
+        # Bot正式启动，并开始记录时间
+        self.__Bot_Boot_output_msg()
 
-    def Add_Listen_Group(self):
+    def __Bot_Boot_output_msg(self):
+        """Bot启动的输出信息, 用于记录一些Bot运行时的一些信息，比如运行时间，消息提示
+        Time格式: 时间戳 精确到秒
+        """
+        print(red_text("Bot初始化完成，并完成启动，持续收集群聊信息，并监听用户关键词..."))
+        self.start_time = int(time.time())  # 获取时间戳，方便计时，精确到秒
+
+    def __get_time(self):
+        """用于获取系统当前时间，时间戳，精确到秒"""
+        now_time = int(time.time())  # 获取当前时间
+        time_spend = now_time - self.start_time  # 获取距离Bot启动过去了多少秒
+        return now_time, time_spend
+
+    def __Add_Listen_Group(self):
         """添加需要监听的微信群
         :param group_name: str 微信群名称
         """
@@ -43,7 +62,7 @@ class WxChatBot:
             self.wx.AddListenChat(who=listen_name, savepic=True)
             print(f"{idx+1}. 已将群聊 {listen_name} 加入监听列表")
 
-    def SendText(self, msg: str, listen_name: str):
+    def __SendText(self, msg: str, listen_name: str):
         """1.向监听的微信群依次推送文字消息
         :param msg: str 文字消息
         :param listen_name: str 监听对象名称
@@ -51,7 +70,7 @@ class WxChatBot:
         print(f"正在向监听对象 {listen_name} 发送消息:  {msg}")
         self.wx.SendMsg(msg, who=listen_name)
 
-    def SendFile(self, file: str, listen_name: str):
+    def __SendFile(self, file: str, listen_name: str):
         """1.向监听的微信群推送文件消息
         :param file: str 文件路径
         :param listen_name: str 监听对象名称
@@ -59,41 +78,36 @@ class WxChatBot:
         print(f"正在向监听对象 {listen_name} 发送文件:  {file}")
         self.wx.SendFiles(file, who=listen_name)
 
-    def Listen_Sensitive(self):
-        """2、3.监听群组中用户的敏感词，获取到会自动回答问题"""
-        print("开始监听群组中用户的关键词")
-        time_count = 0  # 对扫描监听对象消息的时间间隔进行记录
-        while True:
-            msgs = self.wx.GetListenMessage()  # 每隔n秒对所有监测窗口扫一遍，获取该时间段内所有监听对象的新消息
-            """pywintypes.error: (1400, 'SetWindowPos', '无效的窗口句柄。')
-            使用self.wx.GetListenMessage()会自动打开所有监听对象的微信窗口，之后这些窗口就不能再手动关闭，
-            否则就会出现上面的错误
-            """
-            print("time_count: ", time_count, "s\t", "msgs: ", msgs)
-            #  {<wxauto Chat Window at 0x2b4693fdc70 for bot测试>: [['Time', '13:56', '42111807046638'], ['Self', '你好', '42111807046630'], ['SYS', '以下为新消息', '42111807046639'], ['微信小号', '你好', '42111807046633']]}
-            if msgs != dict():
-                msgs_key, msgs_value = list(msgs.keys())[0], \
-                    [value for value in list(msgs.values())[0] if value[0] not in Bot_param['user_name_skip_word']]  # 跳过非用户列表
-                print(msgs_key, msgs_value)
-                matches = re.findall(Bot_param['group_pattern'], str(msgs_key))
-                user_group =matches[0]    # 获取Bot所在群组，注意在群聊中，bot应该将消息发回群组名中
-                for idx, msg in enumerate(msgs_value):
-                    print("msg: ", msg)   # 输出当前时间段内所有用户的消息 ['Self', '我', '42498365841995']
-                    user_name = msg[0]    # 获取当前群组下发送消息的用户的用户名
-                    user_text = msg[1]    # 获取用户发送的文本
+    def __Listen_Sensitive(self):
+        """Bot时刻监听群组中用户的对话内容，并根据监测到的关键词发送提前准备好的自动回复内容"""
+        # time_count = 0  # 对扫描监听对象消息的时间间隔进行记录
+        msgs = self.wx.GetListenMessage()  # 每隔n秒对所有监测窗口扫一遍，获取该时间段内所有监听对象的新消息
+        """pywintypes.error: (1400, 'SetWindowPos', '无效的窗口句柄。')
+        使用self.wx.GetListenMessage()会自动打开所有监听对象的微信窗口，之后这些窗口就不能再手动关闭，
+        否则就会出现上面的错误
+        """
+        print("time_count: ", self.__get_time()[1], "s\t", "msgs: ", msgs)
+        #  {<wxauto Chat Window at 0x2b4693fdc70 for bot测试>: [['Time', '13:56', '42111807046638'], ['Self', '你好', '42111807046630'], ['SYS', '以下为新消息', '42111807046639'], ['微信小号', '你好', '42111807046633']]}
+        if msgs != {}:
+            msgs_key, msgs_value = list(msgs.keys())[0], \
+                [value for value in list(msgs.values())[0] if value[0] not in Bot_param['user_name_skip_word']]  # 跳过非用户列表
+            print(msgs_key, msgs_value)
+            matches = re.findall(Bot_param['group_pattern'], str(msgs_key))
+            user_group =matches[0]    # 获取Bot所在群组，注意在群聊中，bot应该将消息发回群组名中
+            for idx, msg in enumerate(msgs_value):
+                print("msg: ", msg)   # 输出当前时间段内所有用户的消息 ['Self', '我', '42498365841995']
+                user_name = msg[0]    # 获取当前群组下发送消息的用户的用户名
+                user_text = msg[1]    # 获取用户发送的文本
 
-                    for keyword, reply, reply_type in self.keywords:
-                        if keyword in user_text:  # 循环检测用户输入是否含有关键词，然后发送对应消息
-                            if reply_type == 'image' or reply_type == 'file':
-                                self.SendFile(reply, user_group)
-                            else:
-                                self.SendText(reply, user_group)
-                            insert_chat_info_to_db(user_name, user_group, user_text, reply, reply_type)
-                            break
-                    time_count += Bot_param['bot_reply_wait_time']  # 计算Bot在该次间隔内回答所有问题所用时间
-                    time.sleep(Bot_param['bot_reply_wait_time'])
-            time_count += Bot_param['listen_wait_time']  # 计算每次Bot响应的总时间间隔
-            time.sleep(Bot_param['listen_wait_time'])
+                for keyword, reply, reply_type in self.keywords:
+                    if keyword in user_text:  # 循环检测用户输入是否含有关键词，然后发送对应消息
+                        if reply_type == 'image' or reply_type == 'file':
+                            self.__SendFile(reply, user_group)
+                        else:
+                            self.__SendText(reply, user_group)
+                        insert_chat_info_to_db(user_name, user_group, user_text, reply, reply_type)
+                        break
+                time.sleep(Bot_param['bot_reply_wait_time'])  # Bot依次回答每个关键词的间隔时间
 
     def Create_Analysis_Report(self, report_path='./report.txt'):
         """4.提供助手运营情况分析，微信群覆盖率，建设情况，一次答复率，网络经理处理率等
@@ -155,11 +169,58 @@ class WxChatBot:
         print(f"报告以生成，请打开文件 {report_path} 查看")
 
 
+    def __Listen_Report(self):
+        """监听
+        '@Bot 报告'
+        用于报告的打印, 并发送给管理员用户的个人账户
+        同时Bot发送类似正在执行的提示信息
+        """
+        pass
+
+    def __Listen_Time(self):
+        """监听
+        '@Bot 时间 待发送的消息A'
+        用于在指定时间将A发送给所有群组
+        同时Bot发送类似正在执行的提示信息
+        """
+        pass
+
+    def __Listen_Question(self):
+        """监听
+        '@Bot 问题 问题本身A'
+        Bot将问题发送给其对应的客服微信，同时附带群聊名称，以及用户名称，方便客服与用户对接
+        同时Bot发送类似正在执行的提示信息
+        """
+        pass
+
+    def __Collect_All_User_Msg(self):
+        """Bot每隔一段时间收集监听群组中所有用户发送的消息，将文字存入数据库，文件存入指定文件夹内
+        数据库字段：id user_name group_name user_text time
+        如果用户发送的是图片，则将图片存入指定文件夹内，并将图片路径存入数据库user_text字段
+        """
+        pass
+
+    def __Send_Command_to_All_Group(self):
+        """每隔一段时间，Bot向所有群组发送如何触发Bot执行命令的指令，比如：
+        @Bot 问题 问题本身A
+        @Bot 时间 待发送的消息A
+        @Bot 报告
+        """
+        pass
+
+    def Run_Bot(self):
+        """在该While True循环下，Bot根据不同指令执行不同的动作"""
+        while True:
+            self.__Listen_Sensitive()
+
+            time.sleep(Bot_param['listen_wait_time'])  # Bot每隔多久扫描一次所有群聊的消息
+
+
 if __name__ == '__main__':
     # log_file = save_log()
     Bot = WxChatBot()
     # Bot.SendText_Group("你好，我是小助手，有什么可以帮助你的吗？")
     # Bot.SendFile_Group(r"D:\UserData\Pictures\Saved Pictures\美图\wallhaven-6d56k6.jpg")
-    Bot.Listen_Sensitive()
+    Bot.Run_Bot()
     # log_file.close()
     # Bot.Create_Analysis_Report()
