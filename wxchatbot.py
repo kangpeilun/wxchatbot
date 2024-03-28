@@ -18,7 +18,7 @@ import os.path as op
 import time
 from datetime import datetime
 
-from wxauto import WeChat
+from wxauto.wxauto import WeChat
 import re
 import json
 
