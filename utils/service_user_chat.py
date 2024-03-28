@@ -12,7 +12,7 @@
     user_group: 群组1
     service_name: 客服1
     user_question: 问题1
-    service_reply: 客服回答1
+    service_reply: 客服回答1, 客服的回复不容易跟踪，先姑且跳过
     time: 时间
 }
 """
@@ -21,7 +21,7 @@ from utils.util import *
 from utils.database import database
 
 
-def insert_service_user_chat_to_db(user_name, user_group, user_question, service_name, service_reply):
+def insert_service_user_chat_to_db(user_name, user_group, user_question, service_name, service_reply=None):
     """将客服与用户的对话内容插入数据库"""
     cursor = database.cursor()
     cursor.execute(f"insert into service_user_chat (id, user_name, user_group, user_question, service_name, service_reply) values (service_user_chat_seq.nextval, '{user_name}', '{user_group}', '{user_question}', '{service_name}', '{service_reply}')")
