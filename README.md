@@ -87,8 +87,7 @@ all_msg_seq
 ```
 
 `在utils/database.py中配置数据库连接信息`
-
-![image-20240322162855529](https://typora-kpl.oss-cn-hangzhou.aliyuncs.com/image-20240322162855529.png)
+![image-20240328141835231](https://typora-kpl.oss-cn-hangzhou.aliyuncs.com/image-20240328141835231.png)
 
 ![image-20240328141143642](https://typora-kpl.oss-cn-hangzhou.aliyuncs.com/image-20240328141143642.png)
 
@@ -123,10 +122,10 @@ all_msg_seq
 ## 运行Bot主程序
 
 1. 进入wxchatbot.py，找到文件末尾，打开**Bot.Run_Bot()**的注释
-  ![image-20240328140354167](https://typora-kpl.oss-cn-hangzhou.aliyuncs.com/image-20240328140354167.png)
+    ![image-20240328140354167](https://typora-kpl.oss-cn-hangzhou.aliyuncs.com/image-20240328140354167.png)
 2. 使用命令 `python wxchatbot.py` 启动Bot主程序
 3. Bot首先会检查数据库中是否缺少必要的数据，如果确实，则会提示进行输入，请按照要求输入即可
 4. 如果数据库未缺少必要数据，则Bot正式启动
 5. Bot启动时，程序会模拟人手动操作微信的动作，鼠标会被接管，Bot会自动打开listen_list中监听对象的对话窗口(独立出来一个窗口)，随后Bot会在n个监听对象之间的窗口来回切换，每隔一段时间查询一次所有监听对象的消息
 6. 当Bot识别到监听对象发送的消息中的关键字时，自动发送keywords中对应的回复消息，如果是文本就发消息，如果是图片和文件，就发送图片和文件给用户，图片会被自动保存到程序主目录下的 微信图片 文件夹里，同时将运行过程中的一切消息存入数据库中。如果是图片消息，图片会被存入本地的 "微信图片" 文件夹，同时将文件绝对路径存入all_msg中的user_text字段中
-  ![image-20240328140918720](https://typora-kpl.oss-cn-hangzhou.aliyuncs.com/image-20240328140918720.png).
+    ![image-20240328140918720](https://typora-kpl.oss-cn-hangzhou.aliyuncs.com/image-20240328140918720.png).
