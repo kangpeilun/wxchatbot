@@ -260,6 +260,8 @@ class WxChatBot:
         """在该While True循环下，Bot根据不同指令执行不同的动作"""
         while True:
             self.__Listen_Sensitive()
+            # self.__Bot_wait_time(Bot_param['bot_reply_wait_time'])  # 运行玩第一次监听之后，紧接着运行一边监听，用于收集短时间内未来得及处理的消息
+            # self.__Listen_Sensitive()
 
             self.__Bot_wait_time(Bot_param['listen_wait_time'])  # Bot每隔多久扫描一次所有群聊的消息
 

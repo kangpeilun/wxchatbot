@@ -67,5 +67,5 @@ def check_bot_service_from_db():
 
 
 if __name__ == '__main__':
-    # check_bot_service_from_db()
-    read_bot_service_from_db()
+    check_bot_service_from_db()
+    # read_bot_service_from_db()
